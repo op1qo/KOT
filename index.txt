@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>KOT Morning Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b10;--surf:#14141c;--surf2:#1e1e2a;--bord:#2c2c40;
+  --acc:#6effa0;--acc2:#3dd6f5;--acc3:#ff6b6b;--acc4:#ffb347;
+  --tx:#f0f0f5;--tx2:#9090a8;--tx3:#55556a;
+  --card:#17171f;--glow:rgba(110,255,160,0.12);
+}
+[data-theme=light]{
+  --bg:#f2f2ed;--surf:#fff;--surf2:#eaeae5;--bord:#d5d5cc;
+  --acc:#1a8a3d;--acc2:#0a7fa0;--acc3:#cc3333;--acc4:#c07000;
+  --tx:#0f0f18;--tx2:#505060;--tx3:#909098;
+  --card:#fafaf6;--glow:rgba(26,138,61,0.08);
+}
+body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;min-height:100vh;transition:background .25s,color .25s;overflow-x:hidden}
+.sf{font-family:'DM Serif Display',serif}
+.mn{font-family:'DM Mono',monospace}
+
+/* Layout */
+.nav{position:sticky;top:0;z-index:200;background:var(--bg);border-bottom:1px solid var(--bord);backdrop-filter:blur(8px)}
+.nav-inner{max-width:640px;margin:0 auto;padding:0 14px;height:50px;display:flex;align-items:center;justify-content:space-between}
+.tabs{max-width:640px;margin:0 auto;padding:10px 14px 0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.wrap{max-width:640px;margin:0 auto;padding:14px 14px 80px}
+
+/* Screens */
+.scr{display:none}.scr.on{display:block}
+.fade{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--bord);border-radius:14px}
+
+/* Buttons */
+.tbtn{padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--tx2);transition:all .18s;white-space:nowrap;font-family:'Outfit',sans-serif}
+.tbtn.on{background:var(--acc);color:var(--bg)}
+.btn{border:1px solid var(--bord);background:var(--surf);color:var(--tx);border-radius:10px;padding:10px 18px;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:'Outfit',sans-serif}
+.btn:hover{border-color:var(--acc);color:var(--acc)}
+.btn.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:700;font-size:16px;padding:13px 28px}
+.btn.pri:hover{opacity:.87}
+.btn.blu{border-color:var(--acc2);color:var(--acc2)}
+.btn.blu:hover{background:rgba(61,214,245,.08)}
+
+/* Badge */
+.badge{background:var(--glow);border:1px solid var(--acc);color:var(--acc);border-radius:999px;padding:3px 11px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+
+/* Progress ring */
+.rw{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.rsvg{transform:rotate(-90deg)}
+.rtr{fill:none;stroke:var(--bord);stroke-width:7}
+.rpr{fill:none;stroke:var(--acc);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s linear;filter:drop-shadow(0 0 7px var(--acc))}
+.ri{position:absolute;text-align:center;pointer-events:none}
+
+/* Progress bar */
+.pb{background:var(--bord);border-radius:999px;height:5px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:999px;transition:width 1s linear}
+
+/* Step list */
+.step{border-left:2px solid var(--bord);padding-left:12px;margin-bottom:7px;transition:border-color .2s}
+.step.cur{border-left-color:var(--acc)}
+
+/* Day buttons */
+.dbtn{border:1px solid var(--bord);background:var(--surf);color:var(--tx2);border-radius:9px;padding:7px 3px;font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;text-align:center;font-family:'Outfit',sans-serif}
+.dbtn.sel{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+
+/* Collapsible */
+.coll{max-height:0;overflow:hidden;transition:max-height .38s ease}
+.coll.open{max-height:1000px}
+
+/* Phase pill */
+.pp{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+
+/* Video */
+.vwrap{position:relative;width:100%;padding-bottom:56.25%;border-radius:10px;overflow:hidden;background:#000}
+.vwrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.vph{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surf2);cursor:pointer;gap:9px}
+.vpc{width:54px;height:54px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--bg);transition:transform .15s}
+.vpc:hover{transform:scale(1.08)}
+.vtbtn{padding:5px 13px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bord);background:var(--surf);color:var(--tx2);transition:all .18s;font-family:'Outfit',sans-serif}
+.vtbtn.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+
+/* Tracker */
+.wsess{flex:1;height:34px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:all .18s;font-family:'Outfit',sans-serif}
+
+/* Modal overlay */
+.modal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.87);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:16px}
+.modal.open{display:flex}
+.modal-box{width:100%;max-width:540px;background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--bord)}
+
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bord);border-radius:9px}
+@media print{.noprint{display:none!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav noprint">
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;gap:8px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span class="sf" style="font-size:16px;letter-spacing:-.01em">KOT · 15 min</span>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn" style="padding:6px 10px;font-size:13px" onclick="toggleTheme()"><span id="ti">☀️</span></button>
+      <button class="btn noprint" style="padding:6px 10px;font-size:13px" onclick="doPrint()">🖨</button>
+    </div>
+  </div>
+</nav>
+
+<!-- TAB BAR -->
+<div class="tabs noprint">
+  <button class="tbtn on" onclick="goTab('home',this)">Home</button>
+  <button class="tbtn" onclick="goTab('workout',this)">Workout</button>
+  <button class="tbtn" onclick="goTab('videos',this)">📺 Videos</button>
+  <button class="tbtn" onclick="goTab('schedule',this)">Schedule</button>
+  <button class="tbtn" onclick="goTab('why',this)">Why It Works</button>
+  <button class="tbtn" onclick="goTab('tracker',this)">Tracker</button>
+</div>
+
+<div class="wrap">
+
+<!-- ══════════ HOME ══════════ -->
+<div id="s-home" class="scr on fade">
+
+  <div class="card" style="padding:26px 22px;margin-bottom:14px;background:linear-gradient(140deg,var(--surf),var(--surf2));position:relative;overflow:hidden">
+    <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:var(--glow);pointer-events:none"></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px">
+      <span class="badge">2× Per Week</span>
+      <span class="badge" style="color:var(--acc2);border-color:var(--acc2);background:rgba(61,214,245,.08)">15 Minutes</span>
+      <span class="badge" style="color:var(--acc4);border-color:var(--acc4);background:rgba(255,179,71,.08)">No Equipment</span>
+    </div>
+    <h1 class="sf" style="font-size:30px;line-height:1.1;margin-bottom:10px">Bulletproof<br><span style="color:var(--acc)">Morning Knees</span></h1>
+    <p style="color:var(--tx2);font-size:14px;line-height:1.65;margin-bottom:18px">Ben Patrick's <em>Knee Ability Zero</em> — 9 exercises, 15 minutes, with every official tutorial &amp; troubleshooting video embedded directly from the book.</p>
+    <button class="btn pri" style="width:100%" onclick="goTab('workout',document.querySelectorAll('.tbtn')[1])">▶ Start Today's Session</button>
+  </div>
+
+  <div class="card" style="padding:18px;margin-bottom:14px;border-color:var(--acc)">
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px"><span style="font-size:18px">✅</span><strong style="font-size:14px">Why 2× Per Week Works</strong></div>
+    <p style="color:var(--tx2);font-size:13px;line-height:1.65">Ben Patrick confirmed in 2023–24 that <strong style="color:var(--tx)">2–3 sessions per week was his personal "secret weapon"</strong> while time-constrained with a young family. Tendons adapt slower than muscle — adequate rest between sessions produces better structural adaptation than daily training. For beginners and maintenance, 2× is not just acceptable; it's often optimal.</p>
+  </div>
+
+  <div class="card" style="padding:18px;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:700;margin-bottom:13px">📋 The 9-Step Routine</div>
+    <div id="home-list"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div class="card" style="padding:14px;text-align:center"><div style="font-size:26px;margin-bottom:5px">🔥</div><div style="font-size:12px;font-weight:700;color:var(--acc);margin-bottom:3px">BURN = BUILD</div><div style="font-size:11px;color:var(--tx2)">Muscular burn = progress. No burn = step farther from wall.</div></div>
+    <div class="card" style="padding:14px;text-align:center"><div style="font-size:26px;margin-bottom:5px">🚫</div><div style="font-size:12px;font-weight:700;color:var(--acc3);margin-bottom:3px">PAIN = STOP</div><div style="font-size:11px;color:var(--tx2)">Joint pain = regression needed. Never push through.</div></div>
+  </div>
+
+  <div class="card" style="padding:18px;border-color:var(--acc3)">
+    <div style="font-size:13px;font-weight:700;color:var(--acc3);margin-bottom:9px">⚠️ Precautions</div>
+    <ul style="font-size:12px;color:var(--tx2);line-height:2.1;list-style:none">
+      <li>• Sharp joint pain during any exercise → stop &amp; reduce range of motion</li>
+      <li>• Post-surgery or acute injury → consult a physio before starting</li>
+      <li>• Tibialis raises: stand closer to wall to reduce difficulty</li>
+      <li>• ATG Split Squat: elevate front foot if hip flexors are tight</li>
+      <li>• Couch Stretch: skip if patellar tendon is acutely inflamed</li>
+      <li>• Always brisk-walk 2 min before beginning · Flat shoes or bare feet</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════ WORKOUT ══════════ -->
+<div id="s-workout" class="scr">
+
+  <!-- Idle -->
+  <div id="w-idle">
+    <div class="card" style="padding:22px;margin-bottom:14px;text-align:center">
+      <h2 class="sf" style="font-size:24px;margin-bottom:6px">Ready to train?</h2>
+      <p style="color:var(--tx2);font-size:13px;margin-bottom:18px">15 min · 9 exercises · 16 official Ben Patrick videos on demand</p>
+      <div style="background:var(--surf2);border-radius:10px;padding:12px;margin-bottom:18px;text-align:left">
+        <div style="font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px">Before you start</div>
+        <ul style="font-size:13px;color:var(--tx2);line-height:2;list-style:none">
+          <li>🦶 Find a wall with clear space</li>
+          <li>👟 Flat shoes or bare feet</li>
+          <li>🧘 Thick folded towel for Couch Stretch</li>
+          <li>📺 Tap ▶ Tutorial mid-workout to watch Ben's video</li>
+        </ul>
+      </div>
+      <button class="btn pri" style="width:100%;font-size:17px;padding:15px" onclick="startW()">▶ Begin 15-Min Session</button>
+    </div>
+    <div id="w-exlist" class="card" style="padding:18px"></div>
+  </div>
+
+  <!-- Active -->
+  <div id="w-active" style="display:none">
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:5px"><span>Overall</span><span id="wt-total">0:00 / 15:00</span></div>
+      <div class="pb"><div class="pf" id="wt-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card" style="padding:20px;margin-bottom:12px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--acc),var(--acc2))"></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+        <div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:5px">
+            <span class="pp" id="w-phase" style="background:var(--glow);color:var(--acc)">—</span>
+            <span style="font-size:11px;color:var(--tx3)" id="w-count">1 / 9</span>
+          </div>
+          <h2 class="sf" style="font-size:21px;line-height:1.2" id="w-name">—</h2>
+        </div>
+        <div id="w-icon" style="font-size:34px"></div>
+      </div>
+      <div id="w-target" style="font-size:12px;color:var(--acc);font-weight:600;margin-bottom:14px"></div>
+
+      <!-- Ring -->
+      <div style="display:flex;justify-content:center;margin:10px 0">
+        <div class="rw">
+          <svg class="rsvg" width="146" height="146" viewBox="0 0 160 160">
+            <circle class="rtr" cx="80" cy="80" r="68"/>
+            <circle class="rpr" id="w-ring" cx="80" cy="80" r="68" stroke-dasharray="427.25" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ri">
+            <div class="mn" id="w-timer" style="font-size:32px;font-weight:500;color:var(--tx)">—</div>
+            <div id="w-tlabel" style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-top:1px">ready</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cue -->
+      <div style="background:var(--surf2);border-radius:9px;padding:12px;margin-bottom:11px">
+        <div style="font-size:10px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Current cue</div>
+        <div id="w-cue" style="font-size:14px;color:var(--tx);line-height:1.55"></div>
+      </div>
+
+      <!-- Video buttons -->
+      <div style="display:flex;gap:7px;margin-bottom:11px">
+        <button class="btn" style="flex:1;font-size:12px;padding:9px 12px" onclick="openModal(ws.idx,'tutorial')">▶ Tutorial Video</button>
+        <button class="btn blu" style="flex:1;font-size:12px;padding:9px 12px" onclick="openModal(ws.idx,'troubleshoot')">🔧 Troubleshoot</button>
+      </div>
+
+      <!-- Form tip -->
+      <div style="border:1px solid var(--bord);border-radius:9px;padding:11px;margin-bottom:11px">
+        <div style="font-size:10px;color:var(--acc2);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">Form tip</div>
+        <div id="w-ftip" style="font-size:12px;color:var(--tx2);line-height:1.55"></div>
+      </div>
+
+      <!-- Breath -->
+      <div style="display:flex;align-items:center;gap:7px;padding:9px;background:rgba(61,214,245,.06);border-radius:8px;border:1px solid rgba(61,214,245,.18)">
+        <span style="font-size:15px">🌬</span>
+        <span id="w-breath" style="font-size:12px;color:var(--acc2)"></span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;margin-bottom:12px">
+      <button class="btn" style="justify-content:center" onclick="prevEx()">← Prev</button>
+      <button class="btn" id="w-pause" style="min-width:72px;justify-content:center;font-size:17px" onclick="togglePause()">⏸</button>
+      <button class="btn" style="justify-content:center" onclick="nextEx()">Next →</button>
+    </div>
+
+    <div class="card" style="padding:14px" id="w-steps"></div>
+    <div style="text-align:center;margin-top:14px">
+      <button onclick="abandonW()" style="background:none;border:none;color:var(--tx3);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'Outfit',sans-serif">End session early</button>
+    </div>
+  </div>
+
+  <!-- Complete -->
+  <div id="w-done" style="display:none" class="fade">
+    <div class="card" style="padding:28px 22px;text-align:center">
+      <div style="font-size:60px;margin-bottom:14px">🏆</div>
+      <h2 class="sf" style="font-size:26px;margin-bottom:7px;color:var(--acc)">Session Complete!</h2>
+      <p style="color:var(--tx2);font-size:14px;margin-bottom:18px">You just put money in the bank for your body. Tendons are getting stronger.</p>
+      <div style="background:var(--surf2);border-radius:11px;padding:14px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div><div class="mn" style="font-size:24px;color:var(--acc)" id="c-time">—</div><div style="font-size:11px;color:var(--tx3)">Duration</div></div>
+        <div><div class="mn" style="font-size:24px;color:var(--acc)" id="c-week">—</div><div style="font-size:11px;color:var(--tx3)">This Week</div></div>
+      </div>
+      <button class="btn pri" style="width:100%" onclick="resetW()">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ VIDEOS ══════════ -->
+<div id="s-videos" class="scr fade">
+  <div style="margin-bottom:14px">
+    <div style="font-size:17px;font-weight:700;margin-bottom:4px">Official Tutorial Videos</div>
+    <p style="font-size:13px;color:var(--tx2);line-height:1.6">All 16 videos are the exact hyperlinks embedded in <em>Knee Ability Zero</em> by Ben Patrick. Each exercise includes a Tutorial and a Troubleshooting video.</p>
+  </div>
+  <div id="vlib"></div>
+</div>
+
+<!-- ══════════ SCHEDULE ══════════ -->
+<div id="s-schedule" class="scr fade">
+  <div class="card" style="padding:20px;margin-bottom:14px">
+    <div style="font-size:16px;font-weight:700;margin-bottom:5px">Your Training Days</div>
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:16px">Select 2 days. Leave at least one full rest day between them for tendon recovery.</p>
+    <div id="day-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:14px"></div>
+    <div id="day-warn" style="display:none;background:rgba(255,107,107,.09);border:1px solid var(--acc3);border-radius:8px;padding:11px;font-size:12px;color:var(--acc3);margin-bottom:12px">⚠ Back-to-back days: tendons may not recover fully. Try to space sessions out.</div>
+    <div style="background:var(--surf2);border-radius:10px;padding:13px"><div style="font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin-bottom:7px">Your Week</div><div id="week-disp"></div></div>
+  </div>
+  <div class="card" style="padding:18px;margin-bottom:14px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:11px">📅 8-Week Progression</div>
+    <div style="font-size:13px;color:var(--tx2);line-height:1.9">
+      <div style="padding:5px 0;border-bottom:1px solid var(--bord);display:grid;grid-template-columns:76px 1fr"><span style="color:var(--acc);font-weight:600">Weeks 1–2</span><span>Learn form. Stand closer to wall. Use wall/chair assistance.</span></div>
+      <div style="padding:5px 0;border-bottom:1px solid var(--bord);display:grid;grid-template-columns:76px 1fr"><span style="color:var(--acc);font-weight:600">Weeks 3–4</span><span>Increase wall distance on raises. Add depth to Patrick Step.</span></div>
+      <div style="padding:5px 0;border-bottom:1px solid var(--bord);display:grid;grid-template-columns:76px 1fr"><span style="color:var(--acc);font-weight:600">Weeks 5–6</span><span>Single-leg calf variations. Lower front foot on split squat.</span></div>
+      <div style="padding:5px 0;display:grid;grid-template-columns:76px 1fr"><span style="color:var(--acc);font-weight:600">Weeks 7–8</span><span>Work toward flat-ground ATG Split Squat. L-Sit Level 2.</span></div>
+    </div>
+  </div>
+  <div class="card" style="padding:18px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:9px">💡 Best Day Pairings</div>
+    <ul style="font-size:12px;color:var(--tx2);line-height:2.1;list-style:none">
+      <li>🟢 Ideal: Mon/Thu · Tue/Fri · Wed/Sat · Sun/Wed</li>
+      <li>🟡 OK: Mon/Wed · Tue/Thu (shorter but workable)</li>
+      <li>🔴 Avoid: Consecutive days — tendons need 48+ hours</li>
+      <li>⚡ Couch Stretch &amp; Elephant Walk can be done daily</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════ WHY IT WORKS ══════════ -->
+<div id="s-why" class="scr fade">
+  <p style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">The chain: <strong style="color:var(--acc)">foot → ankle → knee → hip</strong>. Every exercise fills a specific gap. Tap to expand, then watch the video.</p>
+  <div id="why-cards"></div>
+</div>
+
+<!-- ══════════ TRACKER ══════════ -->
+<div id="s-tracker" class="scr fade">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div><div style="font-size:17px;font-weight:700">8-Week Progress</div><div style="font-size:12px;color:var(--tx2)">2 sessions/week = 16 total</div></div>
+    <div style="text-align:right"><div class="mn" style="font-size:24px;color:var(--acc)" id="tr-count">0</div><div style="font-size:11px;color:var(--tx3)">done</div></div>
+  </div>
+  <div class="card" style="padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:7px"><span>Overall</span><span id="tr-pct">0%</span></div>
+    <div class="pb" style="height:9px"><div class="pf" id="tr-bar" style="width:0%;transition:width .5s ease"></div></div>
+  </div>
+  <div id="tr-weeks"></div>
+  <div style="display:flex;gap:9px;margin-top:14px">
+    <button class="btn" style="flex:1;color:var(--acc3);border-color:var(--acc3)" onclick="resetTr()">Reset</button>
+    <button class="btn" style="flex:1" onclick="exportTr()">Export CSV</button>
+  </div>
+</div>
+
+</div><!-- end wrap -->
+
+<!-- VIDEO MODAL -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div style="padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--bord)">
+      <div>
+        <div id="m-title" style="font-weight:700;font-size:15px;margin-bottom:7px"></div>
+        <div style="display:flex;gap:6px">
+          <button class="vtbtn on" id="mt-t" onclick="switchModal('tutorial')">▶ Tutorial</button>
+          <button class="vtbtn" id="mt-ts" onclick="switchModal('troubleshoot')">🔧 Troubleshoot</button>
+        </div>
+      </div>
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--tx2);font-size:24px;cursor:pointer;line-height:1;margin-left:10px;padding:0;font-family:'Outfit',sans-serif">×</button>
+    </div>
+    <div style="padding:14px">
+      <div class="vwrap"><iframe id="m-frame" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+      <div id="m-attr" style="margin-top:9px;font-size:10px;color:var(--tx3);text-align:center"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT -->
+<div id="print-area" style="display:none">
+  <div style="font-family:serif;max-width:700px;margin:0 auto;padding:36px 20px;color:#111">
+    <h1 style="font-size:30px;margin-bottom:3px">KOT Morning Routine</h1>
+    <p style="font-size:13px;color:#666;margin-bottom:18px">15 Minutes · 2× Per Week · Ben Patrick's Knee Ability Zero</p>
+    <hr style="margin-bottom:18px">
+    <div id="print-body"></div>
+    <hr style="margin:20px 0">
+    <p style="font-size:10px;color:#999">Pain = Stop · Burn = Progress · Videos from Knee Ability Zero by Ben Patrick</p>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// EXERCISE DATA
+// ═══════════════════════════════════════
+const EX = [
+  {
+    id:'tib1', name:'Tibialis Raise', icon:'🦵', phase:'Foot & Ankle', pc:'#6effa0', dur:90,
+    target:'25 reps · 2-sec hold top & bottom',
+    vT:'gNS_QjGAs_k', vTS:'uyzey3I3pRM',
+    steps:['Stand with back flat against a wall, butt touching it','Walk feet forward until legs are completely straight','Keeping knees straight, flex both feet up toward your shins','Hold the top for 2 full seconds — feel the shin burn','Lower under control, pause 2 seconds at bottom','Burn in the shins = tibialis anterior working. That\'s the goal.'],
+    tip:'Higher heels = harder. Go barefoot or flat shoes. Closer to wall = easier; farther = harder.',
+    breath:'Breathe naturally. Don\'t hold breath on the holds.',
+    why:'The tibialis is your first line of defence against lower-body injuries. Whatever force it can\'t handle goes directly to your knee. No study had ever targeted strengthening it before Ben Patrick made it a standard. Adding it allowed him to dunk off one foot for the first time — all lower extremity pains disappeared and never returned.'
+  },
+  {
+    id:'fhl', name:'FHL Calf Raise', icon:'🦶', phase:'Foot & Ankle', pc:'#6effa0', dur:80,
+    target:'25 reps · big-toe emphasis',
+    vT:'BWedccP0o_U', vTS:'AE07IAfwJYE',
+    steps:['Turn to face the wall, hands flat on it at arm\'s length','Step back until ankles are under stretch, heels slightly lifting','Without bending knees or hips, raise up onto your big toes specifically','Drive through the big toe at the top — not the whole foot','Lower slowly back to the deep-stretched starting position','Single-leg when ready: wrap one leg around the other'],
+    tip:'Big-toe emphasis is the key difference from a regular calf raise. The FHL runs from big toe to mid-calf and stabilises the ankle on landing.',
+    breath:'Exhale rising. Inhale lowering.',
+    why:'Whatever force is not absorbed by the ankle goes into the knee. The FHL is critical for ankle stability on landing. This exercise also locks in more ankle stretch than a traditional calf raise, directly improving ankle mobility as strength grows.'
+  },
+  {
+    id:'tib2', name:'Tibialis Raise ×2', icon:'🔁', phase:'Foot & Ankle', pc:'#6effa0', dur:90,
+    target:'25 more reps · same as Step 1',
+    vT:'gNS_QjGAs_k', vTS:'uyzey3I3pRM',
+    steps:['Turn back to face away from the wall immediately','Butt against wall, feet walked out in front','Same protocol: flex toes up, 2-sec hold top, 2-sec hold bottom','The tibialis is so important it gets done TWICE every session','Stand slightly farther from wall if muscles allow','Second set meaningfully deepens the training effect'],
+    tip:'More fatigue is normal. Stand slightly closer if needed. Still aim for 25 quality reps.',
+    breath:'Natural breathing throughout, same as set 1.',
+    why:'Ben Patrick programmes the tibialis raise twice because it is the most neglected muscle in all lower-body training. He found that one set was not enough — adding the second set was the specific change that allowed him to dunk off one foot when one set had been insufficient.'
+  },
+  {
+    id:'kotcalf', name:'KOT Calf Raise', icon:'🦿', phase:'Ankle → Knee', pc:'#3dd6f5', dur:90,
+    target:'25 reps · knees over toes · only ankles move',
+    vT:'m1aMq9W-jDo', vTS:'ys465KutE0s',
+    steps:['Face wall, hands arm\'s length away','Slide knees over toes to your pain-free comfort level','Ideally: far enough that heels slightly lift off ground at bottom','From this bent-knee position, ONLY move your ankles up and down','Knees, hips, and shoulders stay completely still','Work toward 25 single-leg reps — start with both legs'],
+    tip:'Even a minimal knee bend is productive — strength radiates 15 degrees. Never criticise your current level. Start where you are.',
+    breath:'Don\'t hold breath. Exhale rising, inhale lowering.',
+    why:'Solves two problems: (1) The soleus, most directly linked to Achilles health, only trains in a bent-knee position. (2) It bridges ankle exercises into knee exercises. The body relies on this exact position pushing off in a sprint and on landing — where many Achilles and knee injuries occur.'
+  },
+  {
+    id:'patrick', name:'Patrick Step', icon:'🚶', phase:'Knee Loading', pc:'#ffb347', dur:120,
+    target:'25 reps each side · weaker side first',
+    vT:'lTktLtISKek', vTS:'UkeFQL1PdCg',
+    steps:['Stand on one leg, use wall for balance if needed','Reach same-side foot forward, toes lightly touching ground','Slowly lower heel toward floor — pain-free range ONLY','Pause FULLY at the bottom — no bouncing for momentum','Raise back up with control','Farther you reach = more knee bend = more demand. You choose.'],
+    tip:'Always start on your weaker side. Only match (never exceed) that performance on the dominant side. PAIN = destruction. Pain-free burn = construction.',
+    breath:'Exhale lowering. Inhale rising.',
+    why:'Whatever force muscles can\'t handle at the knee goes to the joint itself. The Patrick Step gives you complete control of exactly how much demand goes through your knee. It is the direct precursor to the ATG Split Squat. Key rule: weaker side first, dominant side matches only.'
+  },
+  {
+    id:'atg', name:'ATG Split Squat', icon:'⚡', phase:'Knee Strength', pc:'#ff6b6b', dur:150,
+    target:'5 sets × 5 reps each side · 30-sec rest',
+    vT:'WHHI9l8Zp40', vTS:'kuVdrktolJQ',
+    steps:['Split stance — find the right foot distance (not too close, not too far)','Front foot flat; back foot on toes pressed, not rolling over','Lower slowly until front hamstring FULLY covers front calf','Keep torso perfectly upright throughout — no leaning forward','Back knee does NOT touch the floor','Pause fully at bottom, rise. 5 reps per side × 5 sets.'],
+    tip:'If hip flexors are tight, elevate front foot on a step. Use wall/chair for hand assistance. Too close = not enough depth. Too far = not enough knee over toe.',
+    breath:'Inhale before lowering. Exhale driving back up.',
+    why:'"If I did only this one exercise for the rest of my life, I would still live in the upper 1% of knee quality life." — Ben Patrick. Bilateral squats mask leg imbalances. The split squat isolates each side, addresses hip flexor tightness (worsened by sitting), and covers the full knee range. His 67-year-old mother worked up to flat-ground ATG Split Squats and ran a half marathon calling it "easy."'
+  },
+  {
+    id:'elephant', name:'Elephant Walk', icon:'🐘', phase:'Hamstring Mobility', pc:'#a78bfa', dur:100,
+    target:'30 reps each side',
+    vT:'cxGfrD9_Uzs', vTS:'JvYYC2m6iNk',
+    steps:['Hands on floor (fingertips or elevated on a step is fine)','Feet slightly wider than hip-width, knees bent to start','Slowly extend one leg straight while keeping the other bent','Feel the hamstring stretch in the extended leg','Bend it back, switch legs — slow alternating march','Work toward palms flat on the floor over time'],
+    tip:'The test is palms flat on floor with straight knees. Start wherever you are. Alternating legs gives twice the load of a static stretch.',
+    breath:'Breathe slowly throughout. Never hold breath during stretch.',
+    why:'You can only use your quads to the degree your hamstrings can stretch. As knee strength grows, quad force grows — without equal hamstring flexibility, an injury-causing imbalance builds. Ben Patrick uses only this one exercise to maintain his splits.'
+  },
+  {
+    id:'lsit', name:'L-Sit', icon:'🪑', phase:'Hip Flexor Strength', pc:'#fbbf24', dur:75,
+    target:'60 sec total · Level 1, 2, or 3',
+    vT:'i8LsLLU8yoI', vTS:'Sm-yuaeLhJc',
+    steps:['Sit on the floor with legs straight out in front','Level 1: alternate lifting one leg at a time, 2-count hold each','Level 2: same but hold butt off floor simultaneously','Level 3: full L-Sit — both legs and butt off the floor','Go back and forth for 60 seconds total','Lean back = easier, lean forward = harder'],
+    tip:'Do not skip this because it seems unrelated to knees. Stronger hip flexors make your legs feel lighter — reducing long-term knee wear. Level 1 is completely valid.',
+    breath:'Breathe steadily throughout. Don\'t hold breath.',
+    why:'Three reasons: (1) As ankle and knee muscles grow, hip flexors must keep pace. (2) Hip flexors are the biggest difference between regular humans and elite sprinters — Ben went from a 6-second 40-yard dash to NFL speed after hip flexor training. (3) Weak hip flexors make you thud harder with every step, adding long-term wear to feet, ankles, Achilles, and knees.'
+  },
+  {
+    id:'couch', name:'Couch Stretch', icon:'🛋️', phase:'Hip & Quad Release', pc:'#f9a8d4', dur:135,
+    target:'60 seconds each side · shin + shoulders to wall (long-term goal)',
+    vT:'Jay0Sd2exg0', vTS:'wLCkMjc5_7c',
+    steps:['Place thick padding (folded towel) under the back knee','Start sideways to the wall — get back knee close to wall base','Spin to face away, lean forward so back foot slides up the wall','Front foot flat on floor in a lunge position','Walk hands up front thigh, then to hips as flexibility grows','Long-term goal: shin AND shoulders touching wall with glute contracted'],
+    tip:'Never force this stretch. Work only to where you can breathe and relax. If ankle is too tight, start with a chair seat. Contracting the glute at the top deepens the hip flexor release.',
+    breath:'Long slow exhales release hip flexors. 4 counts in, 6 counts out.',
+    why:'Tight quads pull the kneecap upward — directly increasing patellar tendon stress. This is a primary cause of anterior knee pain. The Couch Stretch releases this tension, giving the patellar tendon freedom. The better your ATG Split Squat becomes, the more effective your Couch Stretch will be — and vice versa.'
+  }
+];
+
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const TOTAL = EX.reduce((a,e)=>a+e.dur,0);
+
+// App state
+const ap = { days:[1,4], tracker:{}, theme:'dark' };
+const ws = { idx:0, iv:null, rem:0, paused:false, start:null };
+const vls = {}; // video lib loaded state
+let mEx=null, mType='tutorial';
+
+// ═══ BOOT ═══
+function boot(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kot3')||'{}');
+    if(s.days) ap.days=s.days;
+    if(s.tracker) ap.tracker=s.tracker;
+    if(s.theme){ap.theme=s.theme;document.documentElement.setAttribute('data-theme',s.theme);}
+  }catch(e){}
+  renderHomeList();
+  renderWList();
+  renderDays();
+  renderWeek();
+  renderWhy();
+  renderVLib();
+  renderTr();
+  updateTI();
+}
+function save(){
+  try{localStorage.setItem('kot3',JSON.stringify({days:ap.days,tracker:ap.tracker,theme:ap.theme}));}catch(e){}
+}
+
+// ═══ TABS ═══
+function goTab(name,btn){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  const el=document.getElementById('s-'+name);
+  if(el){el.classList.add('on');el.classList.add('fade');}
+  if(btn) btn.classList.add('on');
+}
+
+// ═══ HOME LIST ═══
+function renderHomeList(){
+  document.getElementById('home-list').innerHTML=EX.map((e,i)=>{
+    const m=Math.floor(e.dur/60),s=e.dur%60;
+    const t=(m>0?m+'m ':'')+s+'s';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bord)">
+      <span style="width:20px;height:20px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--acc);flex-shrink:0">${i+1}</span>
+      <span style="font-size:18px;flex-shrink:0">${e.icon}</span>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--tx3)">${e.target}</div></div>
+      <div class="mn" style="font-size:11px;color:var(--tx3);white-space:nowrap">${t}</div>
+    </div>`;
+  }).join('')+`<div style="display:flex;justify-content:space-between;padding:9px 0 0;font-size:12px"><span style="color:var(--tx2)">Total</span><span class="mn" style="color:var(--acc);font-weight:600">${Math.floor(TOTAL/60)}m ${TOTAL%60}s</span></div>`;
+}
+
+// ═══ WORKOUT ═══
+function renderWList(){
+  document.getElementById('w-exlist').innerHTML='<div style="font-size:13px;font-weight:700;margin-bottom:11px">Exercises in This Session</div>'+
+    EX.map((e,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bord)">
+      <span style="font-size:17px">${e.icon}</span>
+      <div style="flex:1;min-width:0"><div style="font-size:13px">${e.name}</div><div style="font-size:11px;color:var(--tx3)">${e.target}</div></div>
+      <button onclick="openModal(${i},'tutorial')" style="background:none;border:1px solid var(--bord);color:var(--tx3);border-radius:7px;padding:3px 9px;font-size:10px;cursor:pointer;font-family:'Outfit',sans-serif">▶</button>
+    </div>`).join('');
+}
+
+function startW(){
+  ws.idx=0; ws.start=Date.now();
+  document.getElementById('w-idle').style.display='none';
+  document.getElementById('w-done').style.display='none';
+  document.getElementById('w-active').style.display='block';
+  loadEx(0);
+}
+
+function loadEx(i){
+  const e=EX[i];
+  ws.rem=e.dur; ws.paused=false;
+  document.getElementById('w-pause').textContent='⏸';
+  document.getElementById('w-name').textContent=e.name;
+  document.getElementById('w-icon').textContent=e.icon;
+  document.getElementById('w-target').textContent=e.target;
+  document.getElementById('w-count').textContent=`${i+1} / ${EX.length}`;
+  const ph=document.getElementById('w-phase');
+  ph.textContent=e.phase; ph.style.background=e.pc+'22'; ph.style.color=e.pc;
+  document.getElementById('w-ftip').textContent=e.tip;
+  document.getElementById('w-breath').textContent=e.breath;
+  document.getElementById('w-steps').innerHTML=
+    '<div style="font-size:10px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px">How to do it</div>'+
+    e.steps.map((s,j)=>`<div class="step ${j===0?'cur':''}" id="ws${j}"><span style="font-size:12px;color:var(--tx2)">${s}</span></div>`).join('');
+  updCue(e,e.dur);
+  runTimer();
+}
+
+function updCue(e,rem){
+  const p=1-(rem/e.dur), idx=Math.min(Math.floor(p*e.steps.length),e.steps.length-1);
+  document.getElementById('w-cue').textContent=e.steps[idx];
+  document.querySelectorAll('[id^="ws"]').forEach((el,j)=>el.classList.toggle('cur',j===idx));
+}
+
+function runTimer(){
+  clearInterval(ws.iv);
+  const e=EX[ws.idx], C=427.25;
+  function tick(){
+    if(ws.paused) return;
+    document.getElementById('w-ring').style.strokeDashoffset=C*(1-ws.rem/e.dur);
+    const m=Math.floor(ws.rem/60),s=ws.rem%60;
+    document.getElementById('w-timer').textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    document.getElementById('w-tlabel').textContent=ws.rem>0?'remaining':'done!';
+    updCue(e,ws.rem);
+    const done=EX.slice(0,ws.idx).reduce((a,x)=>a+x.dur,0)+(e.dur-ws.rem);
+    document.getElementById('wt-bar').style.width=Math.min((done/TOTAL)*100,100)+'%';
+    const el=Math.floor((Date.now()-ws.start)/1000);
+    document.getElementById('wt-total').textContent=`${Math.floor(el/60)}:${(el%60).toString().padStart(2,'0')} / ${Math.floor(TOTAL/60)}:${(TOTAL%60).toString().padStart(2,'0')}`;
+    if(ws.rem<=0){
+      clearInterval(ws.iv);
+      if(ws.idx<EX.length-1) setTimeout(()=>{if(!ws.paused)nextEx();},1500);
+      else setTimeout(doneW,1500);
+    } else ws.rem--;
+  }
+  tick(); ws.iv=setInterval(tick,1000);
+}
+
+function togglePause(){
+  ws.paused=!ws.paused;
+  document.getElementById('w-pause').textContent=ws.paused?'▶':'⏸';
+  if(!ws.paused) runTimer();
+}
+function nextEx(){
+  clearInterval(ws.iv);
+  if(ws.idx<EX.length-1){ws.idx++;loadEx(ws.idx);}else doneW();
+}
+function prevEx(){
+  clearInterval(ws.iv);
+  if(ws.idx>0){ws.idx--;loadEx(ws.idx);}
+}
+function doneW(){
+  clearInterval(ws.iv);
+  document.getElementById('w-active').style.display='none';
+  document.getElementById('w-done').style.display='block';
+  const el=Math.round((Date.now()-ws.start)/1000);
+  document.getElementById('c-time').textContent=`${Math.floor(el/60)}:${(el%60).toString().padStart(2,'0')}`;
+  const today=new Date().toISOString().split('T')[0];
+  if(!ap.tracker[today]) ap.tracker[today]=true;
+  document.getElementById('c-week').textContent=weekCnt()+'/2';
+  save(); renderTr();
+}
+function weekCnt(){
+  const n=new Date(),s=new Date(n);s.setDate(n.getDate()-n.getDay());s.setHours(0,0,0,0);
+  return Object.keys(ap.tracker).filter(d=>new Date(d)>=s).length;
+}
+function resetW(){
+  clearInterval(ws.iv);
+  document.getElementById('w-active').style.display='none';
+  document.getElementById('w-done').style.display='none';
+  document.getElementById('w-idle').style.display='block';
+  document.getElementById('w-ring').style.strokeDashoffset='0';
+  document.getElementById('wt-bar').style.width='0%';
+  goTab('home',document.querySelector('.tbtn'));
+}
+function abandonW(){
+  if(confirm('End session early?')){
+    clearInterval(ws.iv);
+    document.getElementById('w-active').style.display='none';
+    document.getElementById('w-idle').style.display='block';
+    document.getElementById('w-ring').style.strokeDashoffset='0';
+    document.getElementById('wt-bar').style.width='0%';
+  }
+}
+
+// ═══ MODAL ═══
+function openModal(idx,type){
+  mEx=idx; mType=type;
+  const e=EX[idx];
+  document.getElementById('m-title').textContent=e.name;
+  document.getElementById('mt-t').classList.toggle('on',type==='tutorial');
+  document.getElementById('mt-ts').classList.toggle('on',type==='troubleshoot');
+  const vid=type==='tutorial'?e.vT:e.vTS;
+  document.getElementById('m-frame').src=`https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`;
+  document.getElementById('m-attr').textContent=`youtu.be/${vid} · By Ben Patrick · Knee Ability Zero`;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function switchModal(type){
+  if(mEx===null) return;
+  mType=type;
+  const e=EX[mEx];
+  document.getElementById('mt-t').classList.toggle('on',type==='tutorial');
+  document.getElementById('mt-ts').classList.toggle('on',type==='troubleshoot');
+  const vid=type==='tutorial'?e.vT:e.vTS;
+  document.getElementById('m-frame').src=`https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`;
+  document.getElementById('m-attr').textContent=`youtu.be/${vid} · By Ben Patrick`;
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('m-frame').src='';
+  document.body.style.overflow='';
+}
+
+// ═══ VIDEO LIBRARY ═══
+function renderVLib(){
+  document.getElementById('vlib').innerHTML=EX.map((e,i)=>`
+    <div class="card" style="margin-bottom:11px;overflow:hidden">
+      <div onclick="tvl(${i})" style="padding:14px;cursor:pointer;display:flex;align-items:center;gap:11px">
+        <span style="font-size:22px">${e.icon}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600">${e.name}</div>
+          <div style="font-size:11px;color:${e.pc}">${e.phase}</div>
+        </div>
+        <svg id="vlch${i}" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="transition:transform .3s;color:var(--tx3);flex-shrink:0"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="coll" id="vlco${i}">
+        <div style="padding:0 14px 14px">
+          <div style="display:flex;gap:7px;margin-bottom:11px">
+            <button class="vtbtn on" id="vlt${i}" onclick="svl(${i},'tutorial')">▶ Tutorial</button>
+            <button class="vtbtn" id="vlts${i}" onclick="svl(${i},'troubleshoot')">🔧 Troubleshoot</button>
+          </div>
+          <div class="vwrap" id="vlp${i}">
+            <div class="vph" onclick="lvl(${i},'tutorial')">
+              <div class="vpc">▶</div>
+              <div style="font-size:12px;color:var(--tx2);font-weight:600">Tap to load Tutorial Video</div>
+              <div style="font-size:10px;color:var(--tx3)">Ben Patrick · Knee Ability Zero</div>
+            </div>
+          </div>
+          <div style="margin-top:9px;font-size:10px;color:var(--tx3)">Tutorial: youtu.be/${e.vT} · Troubleshoot: youtu.be/${e.vTS}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function tvl(i){
+  const c=document.getElementById(`vlco${i}`),ch=document.getElementById(`vlch${i}`);
+  const open=c.classList.contains('open');
+  document.querySelectorAll('[id^="vlco"]').forEach(el=>el.classList.remove('open'));
+  document.querySelectorAll('[id^="vlch"]').forEach(el=>el.style.transform='');
+  if(!open){c.classList.add('open');ch.style.transform='rotate(180deg)';}
+}
+function lvl(i,type){
+  const e=EX[i],vid=type==='tutorial'?e.vT:e.vTS;
+  document.getElementById(`vlp${i}`).innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${vid}?rel=0&modestbranding=1" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"></iframe>`;
+  vls[i]=type;
+  document.getElementById(`vlt${i}`).classList.toggle('on',type==='tutorial');
+  document.getElementById(`vlts${i}`).classList.toggle('on',type==='troubleshoot');
+}
+function svl(i,type){
+  document.getElementById(`vlt${i}`).classList.toggle('on',type==='tutorial');
+  document.getElementById(`vlts${i}`).classList.toggle('on',type==='troubleshoot');
+  if(vls[i]) lvl(i,type);
+  else{
+    document.getElementById(`vlp${i}`).innerHTML=`<div class="vph" onclick="lvl(${i},'${type}')"><div class="vpc">▶</div><div style="font-size:12px;color:var(--tx2);font-weight:600">Tap to load ${type==='tutorial'?'Tutorial':'Troubleshooting'} Video</div></div>`;
+  }
+}
+
+// ═══ SCHEDULE ═══
+function renderDays(){
+  document.getElementById('day-grid').innerHTML=DAYS.map((d,i)=>`<button class="dbtn ${ap.days.includes(i)?'sel':''}" onclick="toggleDay(${i})">${d}</button>`).join('');
+}
+function toggleDay(i){
+  if(ap.days.includes(i)){if(ap.days.length>1)ap.days=ap.days.filter(d=>d!==i);}
+  else{if(ap.days.length<2){ap.days.push(i);ap.days.sort((a,b)=>a-b);}else{ap.days.shift();ap.days.push(i);ap.days.sort((a,b)=>a-b);}}
+  const d=document.getElementById('day-warn');
+  if(ap.days.length===2){const diff=Math.abs(ap.days[1]-ap.days[0]);d.style.display=Math.min(diff,7-diff)<2?'block':'none';}
+  else d.style.display='none';
+  renderDays(); renderWeek(); save();
+}
+function renderWeek(){
+  const today=new Date().getDay();
+  document.getElementById('week-disp').innerHTML=`<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">${DAYS.map((d,i)=>`<div style="text-align:center;padding:5px 2px;border-radius:8px;background:${ap.days.includes(i)?'var(--glow)':'transparent'};border:1px solid ${ap.days.includes(i)?'var(--acc)':'transparent'};position:relative"><div style="font-size:10px;color:${ap.days.includes(i)?'var(--acc)':'var(--tx3)'};font-weight:${ap.days.includes(i)?'700':'400'}">${d}</div>${ap.days.includes(i)?'<div style="font-size:9px;margin-top:2px">🏋️</div>':'<div style="height:14px"></div>'}${i===today?'<div style="position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--acc2)"></div>':''}</div>`).join('')}</div><div style="margin-top:9px;font-size:12px;color:var(--tx2)">Training: <strong style="color:var(--tx)">${ap.days.map(d=>DAYS[d]).join(' & ')}</strong></div>`;
+}
+
+// ═══ WHY CARDS ═══
+function renderWhy(){
+  document.getElementById('why-cards').innerHTML=EX.map((e,i)=>`
+    <div class="card" style="margin-bottom:9px;overflow:hidden">
+      <div onclick="twy(${i})" style="padding:14px;cursor:pointer;display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">${e.icon}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">${e.name}</div><div style="font-size:11px;color:${e.pc}">${e.phase}</div></div>
+        <svg id="wych${i}" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="transition:transform .3s;color:var(--tx3);flex-shrink:0"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="coll" id="wyco${i}">
+        <div style="padding:0 14px 14px"><div style="border-top:1px solid var(--bord);padding-top:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px">Why this exercise?</div>
+          <p style="font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:12px">${e.why}</p>
+          <div style="background:var(--surf2);border-radius:8px;padding:9px;margin-bottom:11px;font-size:12px;font-weight:600;color:var(--tx)">${e.target}</div>
+          <div style="display:flex;gap:7px">
+            <button onclick="openModal(${i},'tutorial')" class="btn" style="flex:1;font-size:11px;padding:8px 10px">▶ Tutorial</button>
+            <button onclick="openModal(${i},'troubleshoot')" class="btn blu" style="flex:1;font-size:11px;padding:8px 10px">🔧 Troubleshoot</button>
+          </div>
+        </div></div>
+      </div>
+    </div>`).join('');
+}
+function twy(i){
+  const c=document.getElementById(`wyco${i}`),ch=document.getElementById(`wych${i}`);
+  const open=c.classList.contains('open');
+  document.querySelectorAll('[id^="wyco"]').forEach(el=>el.classList.remove('open'));
+  document.querySelectorAll('[id^="wych"]').forEach(el=>el.style.transform='');
+  if(!open){c.classList.add('open');ch.style.transform='rotate(180deg)';}
+}
+
+// ═══ TRACKER ═══
+function renderTr(){
+  const total=Object.keys(ap.tracker).length,MAX=16;
+  document.getElementById('tr-count').textContent=total;
+  document.getElementById('tr-pct').textContent=Math.round((total/MAX)*100)+'%';
+  document.getElementById('tr-bar').style.width=Math.min((total/MAX)*100,100)+'%';
+  const keys=Object.keys(ap.tracker).sort();
+  document.getElementById('tr-weeks').innerHTML=Array.from({length:8},(_,w)=>{
+    const d1=keys.length>w*2,d2=keys.length>w*2+1,cur=total>=w*2&&total<(w+1)*2;
+    return `<div class="card" style="padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px;${cur?'border-color:var(--acc);':''}">
+      <div style="width:58px;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:${cur?'var(--acc)':'var(--tx2)'}">Week ${w+1}</div>${cur?'<div style="font-size:9px;color:var(--acc)">← you</div>':''}</div>
+      <div style="display:flex;gap:7px;flex:1">
+        <button onclick="toggleSess(${w},0)" class="wsess" style="border:2px solid ${d1?'var(--acc)':'var(--bord)'};background:${d1?'var(--glow)':'var(--surf)'};color:${d1?'var(--acc)':'var(--tx3)'}">${d1?'✓ Session 1':'Session 1'}</button>
+        <button onclick="toggleSess(${w},1)" class="wsess" style="border:2px solid ${d2?'var(--acc)':'var(--bord)'};background:${d2?'var(--glow)':'var(--surf)'};color:${d2?'var(--acc)':'var(--tx3)'}">${d2?'✓ Session 2':'Session 2'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleSess(w,s){
+  const keys=Object.keys(ap.tracker).sort(),idx=w*2+s;
+  if(idx<keys.length) delete ap.tracker[keys[idx]];
+  else if(idx===keys.length) ap.tracker[new Date().toISOString().split('T')[0]+'_'+idx]=true;
+  save(); renderTr();
+}
+function resetTr(){if(confirm('Reset all 8 weeks?')){ap.tracker={};save();renderTr();}}
+function exportTr(){
+  const keys=Object.keys(ap.tracker).sort();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['Session,Date\n'+keys.map((k,i)=>`${i+1},${k}`).join('\n')],{type:'text/csv'}));
+  a.download='kot-progress.csv'; a.click();
+}
+
+// ═══ THEME ═══
+function toggleTheme(){ap.theme=ap.theme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',ap.theme);updateTI();save();}
+function updateTI(){document.getElementById('ti').textContent=ap.theme==='dark'?'☀️':'🌙';}
+
+// ═══ PRINT ═══
+function doPrint(){
+  document.getElementById('print-body').innerHTML=EX.map((e,i)=>`<div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #ddd"><div style="font-size:10px;color:#888;text-transform:uppercase">${e.phase}</div><h3 style="font-size:17px;margin:3px 0">${i+1}. ${e.name}</h3><div style="font-size:12px;color:#444;font-weight:600;margin-bottom:7px">${e.target}</div><ol style="font-size:12px;color:#333;line-height:1.8;padding-left:16px">${e.steps.map(s=>`<li>${s}</li>`).join('')}</ol><div style="margin-top:6px;font-size:11px;color:#555"><b>Form tip:</b> ${e.tip}</div><div style="margin-top:3px;font-size:10px;color:#999">▶ Tutorial: youtu.be/${e.vT} · 🔧 Troubleshoot: youtu.be/${e.vTS}</div></div>`).join('');
+  document.getElementById('print-area').style.display='block';
+  window.print();
+  document.getElementById('print-area').style.display='none';
+}
+
+boot();
+</script>
+</body>
+</html>
